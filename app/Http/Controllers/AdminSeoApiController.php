@@ -1,5 +1,48 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\SeoItem;
 use Illuminate\Http\Request;
-class AdminSeoApiController extends Controller{public function index(){return response()->json(SeoItem::latest()->get());}public function store(Request $request){$item=SeoItem::create($this->validated($request));return response()->json($item,201);}public function update(Request $request,SeoItem $item){$item->update($this->validated($request));return response()->json($item);}public function destroy(SeoItem $item){$item->delete();return response()->json(['ok'=>true]);}private function validated(Request $request){return $request->validate(['type'=>'required|in:page,blog,offer,realization','title'=>'required|string|max:255','slug'=>'nullable|string|max:255','content'=>'nullable|string','seo_title'=>'required|string|max:255','seo_description'=>'required|string','focus_keyword'=>'nullable|string|max:190','robots'=>'required|string|max:50','status'=>'required|string|max:50','og_image'=>'nullable|string|max:255']);}}
+
+class AdminSeoApiController extends Controller
+{
+    public function index()
+    {
+        return response()->json(SeoItem::latest()->get());
+    }
+
+    public function store(Request $request)
+    {
+        $item = SeoItem::create($this->validated($request));
+        return response()->json($item, 201);
+    }
+
+    public function update(Request $request, SeoItem $item)
+    {
+        $item->update($this->validated($request));
+        return response()->json($item);
+    }
+
+    public function destroy(SeoItem $item)
+    {
+        $item->delete();
+        return response()->json(['ok' => true]);
+    }
+
+    private function validated(Request $request)
+    {
+        return $request->validate([
+            'type' => 'required|in:page,blog,offer,realization',
+            'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255',
+            'content' => 'nullable|string',
+            'seo_title' => 'required|string|max:255',
+            'seo_description' => 'required|string',
+            'focus_keyword' => 'nullable|string|max:190',
+            'robots' => 'required|string|max:50',
+            'status' => 'required|string|max:50',
+            'og_image' => 'nullable|string|max:255',
+        ]);
+    }
+}

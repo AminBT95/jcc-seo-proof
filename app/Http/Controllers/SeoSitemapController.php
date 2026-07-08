@@ -1,4 +1,61 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\SeoItem;
-class SeoSitemapController extends Controller{public function robots(){return response("User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ".url('/sitemap.xml')."\n",200,['Content-Type'=>'text/plain; charset=UTF-8']);}public function index(){$xml='<?xml version="1.0" encoding="UTF-8"?>'.'<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.$this->sitemap('/sitemap-pages.xml').$this->sitemap('/sitemap-blog.xml').$this->sitemap('/sitemap-offres.xml').$this->sitemap('/sitemap-realisations.xml').'</sitemapindex>';return $this->xml($xml);}public function pages(){return $this->urlset('page');}public function blog(){return $this->urlset('blog');}public function offres(){return $this->urlset('offer');}public function realisations(){return $this->urlset('realization');}private function sitemap($path){return '<sitemap><loc>'.e(url($path)).'</loc><lastmod>'.now()->toAtomString().'</lastmod></sitemap>';}private function urlset($type){$urls=SeoItem::where('type',$type)->where('robots','index, follow')->where('status','published')->get()->map(function($item){return '<url><loc>'.e(url($item->path)).'</loc><lastmod>'.$item->updated_at->toAtomString().'</lastmod><changefreq>weekly</changefreq><priority>'.($item->path==='/'?'1.0':'0.8').'</priority></url>';})->implode('');return $this->xml('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.$urls.'</urlset>');}private function xml($xml){return response($xml,200,['Content-Type'=>'application/xml; charset=UTF-8','Cache-Control'=>'public, max-age=3600']);}}
+
+class SeoSitemapController extends Controller
+{
+    public function robots()
+    {
+        return response(
+            "User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ".url('/sitemap.xml')."\n",
+            200,
+            ['Content-Type' => 'text/plain; charset=UTF-8']
+        );
+    }
+
+    public function index()
+    {
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'
+            . '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+            . $this->sitemap('/sitemap-pages.xml')
+            . $this->sitemap('/sitemap-blog.xml')
+            . $this->sitemap('/sitemap-offres.xml')
+            . $this->sitemap('/sitemap-realisations.xml')
+            . '</sitemapindex>';
+
+        return $this->xml($xml);
+    }
+
+    public function pages() { return $this->urlset('page'); }
+    public function blog() { return $this->urlset('blog'); }
+    public function offres() { return $this->urlset('offer'); }
+    public function realisations() { return $this->urlset('realization'); }
+
+    private function sitemap($path)
+    {
+        return '<sitemap><loc>'.e(url($path)).'</loc><lastmod>'.now()->toAtomString().'</lastmod></sitemap>';
+    }
+
+    private function urlset($type)
+    {
+        $urls = SeoItem::where('type', $type)
+            ->where('robots', 'index, follow')
+            ->where('status', 'published')
+            ->get()
+            ->map(function ($item) {
+                return '<url><loc>'.e(url($item->path)).'</loc><lastmod>'.$item->updated_at->toAtomString().'</lastmod><changefreq>weekly</changefreq><priority>'.($item->path === '/' ? '1.0' : '0.8').'</priority></url>';
+            })->implode('');
+
+        return $this->xml('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.$urls.'</urlset>');
+    }
+
+    private function xml($xml)
+    {
+        return response($xml, 200, [
+            'Content-Type' => 'application/xml; charset=UTF-8',
+            'Cache-Control' => 'public, max-age=3600',
+        ]);
+    }
+}
