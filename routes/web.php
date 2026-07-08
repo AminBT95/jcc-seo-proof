@@ -1,18 +1,19 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Http\Controllers\PublicSeoController;
+use App\Http\Controllers\AdminSeoApiController;
+use App\Http\Controllers\SeoSitemapController;
+Route::get('/robots.txt',[SeoSitemapController::class,'robots']);
+Route::get('/sitemap.xml',[SeoSitemapController::class,'index']);
+Route::get('/sitemap-pages.xml',[SeoSitemapController::class,'pages']);
+Route::get('/sitemap-blog.xml',[SeoSitemapController::class,'blog']);
+Route::get('/sitemap-offres.xml',[SeoSitemapController::class,'offres']);
+Route::get('/sitemap-realisations.xml',[SeoSitemapController::class,'realisations']);
+Route::prefix('api')->group(function(){Route::get('/items',[AdminSeoApiController::class,'index']);Route::post('/items',[AdminSeoApiController::class,'store']);Route::put('/items/{item}',[AdminSeoApiController::class,'update']);Route::delete('/items/{item}',[AdminSeoApiController::class,'destroy']);});
+Route::get('/admin',fn()=>view('seo-admin'));
+Route::get('/',[PublicSeoController::class,'home']);
+Route::get('/blog',[PublicSeoController::class,'listing'])->defaults('kind','blog');
+Route::get('/offres',[PublicSeoController::class,'listing'])->defaults('kind','offres');
+Route::get('/realisations',[PublicSeoController::class,'listing'])->defaults('kind','realisations');
+Route::get('/{kind}/{slug}',[PublicSeoController::class,'show'])->whereIn('kind',['blog','offres','realisations']);
+Route::get('/{slug}',[PublicSeoController::class,'page']);

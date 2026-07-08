@@ -1,0 +1,4 @@
+@extends('layouts.seo')
+@section('content')
+<section class="card"><span class="chip">{{ $item->type }}</span><h1>{{ $item->title }}</h1><p>{{ $item->content }}</p><p><strong>Preuve :</strong> fais Ctrl+U. Les balises SEO sont dans le HTML initial Laravel.</p></section><section class="grid"><div class="card"><h2>Aperçu Google</h2><div class="google"><div class="gurl">{{ url($item->path) }}</div><div class="gtitle">{{ $item->seo_title }}</div><div class="gdesc">{{ $item->seo_description }}</div></div><p>Score SEO : <strong>{{ $item->seo_score }}/100</strong></p><div class="score"><span style="width: {{ $item->seo_score }}%"></span></div></div><div class="card"><h2>Aperçu Social</h2><div class="social"><strong>{{ $item->seo_title }}</strong><span>{{ $item->seo_description }}</span></div></div></section>
+@endsection
